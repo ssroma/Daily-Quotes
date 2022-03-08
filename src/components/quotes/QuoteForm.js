@@ -5,20 +5,34 @@ import Card from '../UI/Card';
 import LoadingSpinner from '../UI/LoadingSpinner';
 import classes from './QuoteForm.module.css';
 
+const validateEmpty = value => value.trim().length > 0;
+
 const QuoteForm = (props) => {
   const authorInputRef = useRef();
   const textInputRef = useRef();
   const [formFocus, setFormFocus] = useState(false);
+  const [requiredField, setRequiredField] = useState(false);
 
   function submitFormHandler(event) {
     event.preventDefault();
-    
     const enteredAuthor = authorInputRef.current.value;
     const enteredText = textInputRef.current.value;
+    // Vlaidate fields, could not be empty.
+    const validAuthor = validateEmpty(enteredAuthor);
+    const validText = validateEmpty(enteredText);
+    
+    const validForm = validAuthor && validText;
 
-    // optional: Could validate here
-
+    if(!validForm){
+      setRequiredField(true);
+      return;
+    }
+    
     props.onAddQuote({ author: enteredAuthor, text: enteredText });
+  }
+
+  const fieldFocusHandler = (event) => {
+    setRequiredField(false);
   }
 
   const formFocusFineshedHandler = () => {
@@ -26,7 +40,6 @@ const QuoteForm = (props) => {
   }
 
   const formFocusHandler = () => {
-    console.log("asdfasdfa focus");
     setFormFocus(true);
 
   }
@@ -43,14 +56,14 @@ const QuoteForm = (props) => {
             <LoadingSpinner />
           </div>
         )}
-
+        {requiredField && <p className={classes.filedRequired}>All fields are required.</p>}
         <div className={classes.control}>
           <label htmlFor='author'>Author</label>
-          <input type='text' id='author' ref={authorInputRef} />
+          <input type='text' id='author' ref={authorInputRef} onFocus={fieldFocusHandler} className={requiredField ? classes.error : ''} />
         </div>
         <div className={classes.control}>
           <label htmlFor='text'>Text</label>
-          <textarea id='text' rows='5' ref={textInputRef}></textarea>
+          <textarea id='text' rows='5' ref={textInputRef} onFocus={fieldFocusHandler} className={requiredField ? classes.error : ''} ></textarea>
         </div>
         <div className={classes.actions}>
           <button onClick={formFocusFineshedHandler} className='btn'>Add Quote</button>

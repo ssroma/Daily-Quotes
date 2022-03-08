@@ -47,3 +47,13 @@
 .actions button {
   font-size: 1.25rem;
 }
+
+.filedRequired{
+  font-size: .8rem;
+  color: red;
+}
+
+.control .error{
+  border-color: red;
+  background-color: #ff000010;
+}
